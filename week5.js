@@ -16,10 +16,13 @@
 window.addEventListener('DOMContentLoaded', async function() {
     // Get a reference to the "get weather" button
     let getWeatherButton = document.querySelector(`.get-weather`)
+
     // When the "get weather" button is clicked:
     getWeatherButton.addEventListener(`click`, async function(event){
+
       // - Ignore the default behavior of the button
       event.preventDefault()
+
       // - Get a reference to the element containing the user-entered location
       let locationInput = document.querySelector(`#location`)
   
@@ -47,7 +50,7 @@ window.addEventListener('DOMContentLoaded', async function() {
         // - Write the json-formatted data to the JavaScript console
         console.log(json)
   
-        // - Store the interpreted location, current weather conditions, the forecast as three separate variables
+        // - Store the interpreted location, current weather conditions, current Temp, and the forecast as four separate variables
         let interpretedLocation = `${json.location.name}, ${json.location.region}`
         let weatherConditions = json.current.condition
         let currentTemp = json.current.temp_f
@@ -55,13 +58,15 @@ window.addEventListener('DOMContentLoaded', async function() {
 
         // - Continue the recipe yourself!
 
-      // Add in title based on user input
+        // Add in title based on user input
 
         // Create a variable for the current weather div we're going to add to
         let currentWeather = document.querySelector(`.current`)
+        
+        // Add HTML into the current weather div using the data from the weather API 
 
-        // Insert HTML into the current weather div, using the data from the weather api
-        currentWeather.insertAdjacentHTML(`beforeend`,`
+        // Create a variable for the HTML we want to display and use the dynamic variables we created (location, current, and forecast)
+        let currentWeatherSectionHTML = (`
         <div class="text-center space-y-2">
           <div class="font-bold text-3xl">Current Weather for ${interpretedLocation}</div>
           <div class="font-bold">
@@ -72,30 +77,36 @@ window.addEventListener('DOMContentLoaded', async function() {
           </div>
         </div>
         `)
-      // Add in forecast section
-        
-          // Create a variable fo the forecast div we're going to add to
-          let forecastList = document.querySelector(`.forecast`)
 
-          // Add forecast title, using dynamic number of days variable 
-          forecastList.insertAdjacentHTML(`beforeend`, `
+        // Use .innerHTML instead of .insertAdjacentHTML to prevent buildup of queries on the page; set the value of the inner HTML to the variable we just created
+        currentWeather.innerHTML = currentWeatherSectionHTML
+      
+        // Add in forecast section
+        
+        // Create a variable fo the forecast div we're going to add to
+        let forecastList = document.querySelector(`.forecast`)
+          
+        // Create a varaible for the HTML we want to want to insert into the forecast div
+        // Add forecast title, using dynamic number of days variable 
+        let forecastSectionHTML = (`
           <div class="forecastSection text-center space-y-8">
             <div class="font-bold text-3xl">${days} Day Forecast</div>
-            `)
-            // For every day the the forecast object, display the general weather condition, the date, the temperature (high to low) and condition
-            // Loop through the weather forecast object to display every day, but only display the forecast section title above once. 
-            for (let i=0; i<weatherForcast.length; i++){
-              forecastList.insertAdjacentHTML(`beforeend`, `
+          </div>
+          `)
+        forecastList.innerHTML = forecastSectionHTML
+
+        // For every day the the forecast object, display the general weather condition, the date, the temperature (high to low) and condition
+        // Loop through the weather forecast object to display every day, but only display the forecast section title above once. 
+        for (let i=0; i<weatherForcast.length; i++){
+          forecastList.insertAdjacentHTML(`beforeend`, `
             <div class="text-center">
               <img src="https:${weatherForcast[i].day.condition.icon}" class="mx-auto">
               <h1 class="text-2xl text-bold text-gray-500">${weatherForcast[i].date}</h1>
               <h2 class="text-xl">High ${weatherForcast[i].day.maxtemp_f}° – Low ${weatherForcast[i].day.mintemp_f}°</h2>
               <p class="text-gray-500">${weatherForcast[i].day.condition.text}</h1>
             </div>
-          `)
+            `)
             }
-          // Add in ending div for the forecast section
-          forecastList.insertAdjacentHTML(`beforeend`,`</div>`)
       }
     })
   })
